@@ -1,22 +1,42 @@
-interface Property {
-  beds: string;
-  baths: string;
-  sqft: string;
-  lastSaleDate: string;
-  lastSaleAmount: string;
-}
+import { Property } from "../services/property.js";
 
-/**
- * Formats property info into a concise SMS message
- * @param address The display address from geocoding
- * @param property The property object returned from ATTOM
- * @returns A string ready to send via SMS
- */
-export function formatPropertyMessage(address: string, property: Property): string {
-  return `Property Info for ${address}:
+export function formatPropertyMessage(locationName: string, property: Property): string {
+  const parts: string[] = [];
 
-Beds: ${property.beds}
-Baths: ${property.baths}
-Sqft: ${property.sqft}
-Last Sale: ${property.lastSaleAmount} on ${property.lastSaleDate}`;
+  parts.push(`Property Info for ${locationName}`);
+  if (property.address) parts.push(`Address: ${property.address}`);
+
+  if (property.propertyType)
+    parts.push(`Type: ${property.propertyType}`);
+
+  if (property.bedrooms !== undefined || property.bathrooms !== undefined)
+    parts.push(
+      `${property.bedrooms ?? "?"} bd | ${property.bathrooms ?? "?"} ba`
+    );
+
+  if (property.squareFeet)
+    parts.push(`Size: ${property.squareFeet.toLocaleString()} sq ft`);
+
+  if (property.lotSize)
+    parts.push(`Lot: ${property.lotSize.toLocaleString()} sq ft`);
+
+  if (property.yearBuilt)
+    parts.push(`Built: ${property.yearBuilt}`);
+
+  if (property.attomId)
+    parts.push(`ATTOM ID: ${property.attomId}`);
+
+  // Include last sale data if available
+  if (property.lastSaleDate || property.lastSaleAmount) {
+    parts.push("");
+    parts.push("Last Sale:");
+    if (property.lastSaleDate)
+      parts.push(`Date: ${property.lastSaleDate}`);
+    if (property.lastSaleAmount)
+      parts.push(`Amount: $${property.lastSaleAmount.toLocaleString()}`);
+    if (property.lastSaleDocType)
+      parts.push(`Doc Type: ${property.lastSaleDocType}`);
+  }
+
+  return parts.filter(Boolean).join("\n");
 }
