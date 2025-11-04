@@ -1,4 +1,13 @@
 import fetch from "node-fetch";
+import { z } from "zod";
+
+const geocodeResultSchema = z.array(
+  z.object({
+    lat: z.string(),
+    lon: z.string(),
+    display_name: z.string(),
+  })
+);
 
 export async function geocodeAddress(query: string) {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
@@ -10,17 +19,15 @@ export async function geocodeAddress(query: string) {
 
   if (!res.ok) throw new Error("Geocoding failed");
 
-  const data = (await res.json()) as {
-    lat: number;
-    lon: number;
-    display_name: string;
-  }[];
+  const data = await res.json();
+  const parseResult = geocodeResultSchema.safeParse(data);
 
-  if (!data.length) return null;
+  if (!parseResult.success || parseResult.data.length === 0) return null;
 
+  const result = parseResult.data[0];
   return {
-    lat: String(data[0].lat),
-    lon: String(data[0].lon),
-    display_name: data[0].display_name,
+    lat: result.lat,
+    lon: result.lon,
+    display_name: result.display_name,
   };
 }

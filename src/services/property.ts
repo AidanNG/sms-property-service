@@ -1,8 +1,48 @@
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import { z } from "zod";
 dotenv.config();
 
 import type { AttomProperty, AttomSale, Property } from "../types/propertyTypes.js";
+
+// Zod schemas
+const attomSaleSchema = z.object({
+  saleTransDate: z.string().optional(),
+  amount: z
+    .object({
+      saleamt: z.number().optional(),
+      saledoctype: z.string().optional(),
+    })
+    .optional(),
+});
+
+const attomPropertySchema = z.object({
+  identifier: z
+    .object({ attomId: z.number().optional() })
+    .optional(),
+  address: z.object({ oneLine: z.string().optional() }).optional(),
+  building: z
+    .object({
+      size: z.object({ universalsize: z.number().optional() }).optional(),
+      rooms: z.object({
+        bathstotal: z.number().optional(),
+        beds: z.number().optional(),
+      }).optional(),
+    })
+    .optional(),
+  summary: z
+    .object({
+      yearbuilt: z.number().optional(),
+      propertyType: z.string().optional(),
+    })
+    .optional(),
+  lot: z.object({ lotSize1: z.number().optional() }).optional(),
+  salehistory: z.array(attomSaleSchema).optional(),
+});
+
+const attomResponseSchema = z.object({
+  property: z.array(attomPropertySchema).optional(),
+});
 
 export async function getPropertyData(lat: string, lon: string) {
   const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/snapshot?latitude=${lat}&longitude=${lon}`;
@@ -22,13 +62,14 @@ export async function getPropertyData(lat: string, lon: string) {
       throw new Error(`ATTOM request failed (${res.status})`);
     }
 
-    const data = (await res.json()) as { property?: AttomProperty[] };
-    //console.log("ATTOM Full Response:", JSON.stringify(data, null, 2));
 
-    const property = data?.property?.[0];
+    const data = await res.json();
+    const parsed = attomResponseSchema.parse(data);
+    const property = parsed.property?.[0];
     if (!property) return undefined;
 
-    let lastSale: AttomSale | undefined;
+    let lastSale;
+    //console.log("ATTOM Full Response:", JSON.stringify(data, null, 2));
 
   //perform second api call to call sales history endpoint
   if (property.identifier?.attomId) {
@@ -40,8 +81,9 @@ export async function getPropertyData(lat: string, lon: string) {
       },
     });
     if (salesRes.ok) {
-      const salesData = (await salesRes.json()) as { property?: { salehistory?: AttomSale[] }[] };
-      const saleHistory = salesData?.property?.[0]?.salehistory || [];
+      const salesData = await salesRes.json();
+      const parsedSales = attomResponseSchema.parse(salesData);
+      const saleHistory = parsedSales.property?.[0]?.salehistory || [];
       console.log("ATTOM Full Response:", JSON.stringify(salesData, null, 2));
 
       // sort by most recent sale
