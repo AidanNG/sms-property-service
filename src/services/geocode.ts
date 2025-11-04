@@ -1,18 +1,21 @@
 import fetch from "node-fetch";
 
 export async function geocodeAddress(query: string) {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+    query
+  )}&format=json&limit=1`;
   const res = await fetch(url, {
     headers: { "User-Agent": "PropertySMS/1.0 (your@email.com)" },
   });
 
   if (!res.ok) throw new Error("Geocoding failed");
-  interface GeocodeResult {
+
+  const data = (await res.json()) as {
     lat: number;
     lon: number;
     display_name: string;
-  }
-  const data = (await res.json()) as GeocodeResult[];
+  }[];
+
   if (!data.length) return null;
 
   return {

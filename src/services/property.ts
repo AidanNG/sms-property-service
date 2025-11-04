@@ -2,58 +2,8 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 
-export interface AttomIdentifier {
-  Id?: number;
-  apn?: string;
-  fips?: string;
-  attomId?: number;
-}
+import type { AttomProperty, AttomSale, Property } from "../types/propertyTypes.js";
 
-export interface AttomSale {
-  saleTransDate?: string;
-  amount?:{
-    saleamt?: number;
-    saledoctype?: string;
-  }
-}
-
-export interface AttomProperty {
-  identifier?: AttomIdentifier;
-  lot?: {
-    lotSize1?: number;
-  };
-  address?: {
-    oneLine?: string;
-  };
-  building?: {
-    size?: {
-      universalsize?: number;
-    };
-    rooms?: {
-      bathstotal?: number;
-      beds?: number;
-    };
-  };
-  summary?: {
-    yearbuilt?: number;
-    propertyType?: string;
-  };
-  salehistory?: AttomSale[];
-}
-
-export interface Property {
-  address: string;
-  bedrooms?: number;
-  bathrooms?: number;
-  squareFeet?: number;
-  yearBuilt?: number;
-  lotSize?: number;
-  propertyType?: string;
-  attomId?: number;
-  lastSaleDate?: string;
-  lastSaleAmount?: number;
-  lastSaleDocType?: string;
-}
 export async function getPropertyData(lat: string, lon: string) {
   const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/snapshot?latitude=${lat}&longitude=${lon}`;
   console.log("Fetching ATTOM property snapshot:", url);

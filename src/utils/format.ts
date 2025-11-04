@@ -1,4 +1,4 @@
-import { Property } from "../services/property.js";
+import type { Property } from "../types/propertyTypes.js";
 
 export function formatPropertyMessage(locationName: string, property: Property): string {
   const parts: string[] = [];
