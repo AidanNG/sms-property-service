@@ -3,46 +3,7 @@ import dotenv from "dotenv";
 import { z } from "zod";
 dotenv.config();
 
-import type { AttomProperty, AttomSale, Property } from "../types/propertyTypes.js";
-
-// Zod schemas
-const attomSaleSchema = z.object({
-  saleTransDate: z.string().optional(),
-  amount: z
-    .object({
-      saleamt: z.number().optional(),
-      saledoctype: z.string().optional(),
-    })
-    .optional(),
-});
-
-const attomPropertySchema = z.object({
-  identifier: z
-    .object({ attomId: z.number().optional() })
-    .optional(),
-  address: z.object({ oneLine: z.string().optional() }).optional(),
-  building: z
-    .object({
-      size: z.object({ universalsize: z.number().optional() }).optional(),
-      rooms: z.object({
-        bathstotal: z.number().optional(),
-        beds: z.number().optional(),
-      }).optional(),
-    })
-    .optional(),
-  summary: z
-    .object({
-      yearbuilt: z.number().optional(),
-      propertyType: z.string().optional(),
-    })
-    .optional(),
-  lot: z.object({ lotSize1: z.number().optional() }).optional(),
-  salehistory: z.array(attomSaleSchema).optional(),
-});
-
-const attomResponseSchema = z.object({
-  property: z.array(attomPropertySchema).optional(),
-});
+import { attomResponseSchema } from "../types/propertyTypes.js";
 
 export async function getPropertyData(lat: string, lon: string) {
   const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/snapshot?latitude=${lat}&longitude=${lon}`;
