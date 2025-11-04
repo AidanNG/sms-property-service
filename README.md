@@ -24,15 +24,16 @@ A TypeScript-based **Express server** that receives **incoming SMS messages**, l
 
 ## Project Structure
 
+```plaintext
 sms-property-service/
 ├── src/
-│ ├── server.ts # Express app entry point
-│ ├── services/
-│ │ ├── property.ts # ATTOM API integration (snapshot + sales)
-│ │ ├── geocode.ts # Geocoding utility (Nominatim or similar)
-│ ├── utils/
-│ │ ├── format.ts # Formats property info into readable messages
-│ └── types/ # (Optional) Shared type definitions
-├── .env # Environment variables (not committed)
+│   ├── server.ts                # Express app entry point
+│   ├── services/
+│   │   ├── property.ts          # ATTOM API integration (snapshot + sales)
+│   │   ├── geocode.ts           # Geocoding utility (Nominatim or similar)
+│   ├── utils/
+│   │   ├── format.ts            # Formats property info into readable messages
+│   └── types/                   # (Optional) Shared type definitions
+├── .env                         # Environment variables (not committed)
 ├── package.json
 └── tsconfig.json
