@@ -11,7 +11,16 @@ const smsSchema = z.object({
     Body: z.string().min(1, "Message body is required"),
     From: z.string().min(1, "Sender phone number is required"),
 });
-router.post("/incoming", async (req, res) => {
+// Test route to verify error handling
+router.get("/test-error", (req, res, next) => {
+    try {
+        throw new Error("This is a test error for the centralized error handler");
+    }
+    catch (err) {
+        next(err); // Forward to errorHandler
+    }
+});
+router.post("/incoming", async (req, res, next) => {
     const twiml = new Twilio.twiml.MessagingResponse();
     const parseResult = smsSchema.safeParse(req.body);
     //if the sms payload is invalid, respond with error message
@@ -22,14 +31,15 @@ router.post("/incoming", async (req, res) => {
             subject: `Property Info Failed - Invalid SMS Payload`,
             text: `Received invalid SMS payload: ${JSON.stringify(req.body)}`,
         });
-        return res.type("text/xml").send(twiml.toString());
+        throw { message: "No SMS body provided", statusCode: 400 };
+        //return res.type("text/xml").send(twiml.toString());
     }
     const { Body: body, From: from } = parseResult.data;
     console.log(`Incoming SMS from ${from}: "${body}"`);
     try {
         const geo = await geocodeAddress(body);
         if (!geo)
-            throw new Error("Address not found");
+            throw { message: "Address not found", statusCode: 404 };
         const property = await getPropertyData(geo.lat, geo.lon);
         if (!property) {
             await sendPropertyEmail({
@@ -48,8 +58,9 @@ router.post("/incoming", async (req, res) => {
         }
     }
     catch (err) {
-        console.error("Error processing SMS:", err);
-        twiml.message("Sorry, something went wrong. Please try again later.");
+        //console.error("Error processing SMS:", err);
+        //twiml.message("Sorry, something went wrong. Please try again later.");
+        next(err);
     }
     res.type("text/xml").send(twiml.toString());
 });
