@@ -1,7 +1,6 @@
 import fetch from "node-fetch";
-import dotenv from "dotenv";
 import { logger } from "../utils/logger.js";
-dotenv.config();
+import { env } from "../config/env.js";
 import { attomResponseSchema } from "../types/propertyTypes.js";
 export async function getPropertyData(lat, lon) {
     const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/snapshot?latitude=${lat}&longitude=${lon}`;
@@ -10,7 +9,7 @@ export async function getPropertyData(lat, lon) {
         const res = await fetch(url, {
             headers: {
                 Accept: "application/json",
-                "Ocp-Apim-Subscription-Key": process.env.ATTOM_API_KEY,
+                "Ocp-Apim-Subscription-Key": env.ATTOM_API_KEY,
             },
         });
         if (!res.ok) {
@@ -31,7 +30,7 @@ export async function getPropertyData(lat, lon) {
             const salesRes = await fetch(salesUrl, {
                 headers: {
                     Accept: "application/json",
-                    "Ocp-Apim-Subscription-Key": process.env.ATTOM_API_KEY,
+                    "Ocp-Apim-Subscription-Key": env.ATTOM_API_KEY,
                 },
             });
             if (salesRes.ok) {

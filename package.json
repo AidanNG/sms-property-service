@@ -15,6 +15,7 @@
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
     "dotenv": "^17.2.3",
+    "dotenv-safe": "^9.1.0",
     "express": "^5.1.0",
     "node-fetch": "^3.3.2",
     "twilio": "^5.10.2",
@@ -22,6 +23,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/dotenv-safe": "^9.1.0",
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.2",
     "nodemon": "^3.1.10",
