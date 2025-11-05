@@ -1,7 +1,7 @@
 import express from "express";
 import Twilio from "twilio";
 import { geocodeAddress } from "../services/geocode.js";
-import { getPropertyData } from "../services/property.js";
+import { getPropertyDataByAddress } from "../services/property.js";
 import { sendPropertyEmail } from "../services/email.js";
 import { formatPropertyMessage } from "../utils/format.js";
 import { logger } from "../utils/logger.js";
@@ -17,7 +17,7 @@ router.post("/incoming", async (req, res, next) => {
     const parseResult = smsSchema.safeParse(req.body);
     //if the sms payload is invalid, respond with error message
     if (!parseResult.success) {
-        logger.error("Invalid SMS payload:", parseResult.error.format());
+        logger.error(`Invalid SMS payload: ${parseResult.error.format()}`);
         twiml.message("Invalid request. Make sure your message is not empty.");
         await sendPropertyEmail({
             subject: `Property Info Failed - Invalid SMS Payload`,
@@ -32,7 +32,7 @@ router.post("/incoming", async (req, res, next) => {
         const geo = await geocodeAddress(body);
         if (!geo)
             throw { message: "Address not found", statusCode: 404 };
-        const property = await getPropertyData(geo.lat, geo.lon);
+        const property = await getPropertyDataByAddress(body.split(","), geo.lat, geo.lon);
         if (!property) {
             await sendPropertyEmail({
                 subject: `Property Lookup Failed`,
@@ -41,16 +41,16 @@ router.post("/incoming", async (req, res, next) => {
             twiml.message("Your request was received. Check your email for the property info.");
         }
         else {
-            const reply = formatPropertyMessage(geo.display_name, property);
+            const reply = formatPropertyMessage(body, property);
             await sendPropertyEmail({
-                subject: `Property Info for ${geo.display_name}`,
+                subject: `Property Info for ${body}`,
                 text: reply,
             });
             twiml.message("Your property info has been sent to your email.");
         }
     }
     catch (err) {
-        //logger.error("Error processing SMS:", err);
+        logger.error(`Error processing SMS: ${err}`);
         //twiml.message("Sorry, something went wrong. Please try again later.");
         next(err);
     }

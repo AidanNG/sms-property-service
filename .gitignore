@@ -4,3 +4,4 @@ node_modules
 IMPROVEMENT_PLAN.md
 logs
 coverage
+dist

@@ -6,7 +6,6 @@ dotenvSafe.config({
 });
 // Centralized env export
 export const env = {
-    NODE_ENV: process.env.NODE_ENV || "development",
     PORT: process.env.PORT ? Number(process.env.PORT) : 3000,
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
@@ -16,7 +15,6 @@ export const env = {
     ATTOM_API_KEY: process.env.ATTOM_API_KEY,
 };
 // Log summary (hide sensitive data)
-logger.info("✅ Environment variables validated successfully", {
-    NODE_ENV: env.NODE_ENV,
+logger.info("Environment variables validated successfully", {
     PORT: env.PORT,
 });
