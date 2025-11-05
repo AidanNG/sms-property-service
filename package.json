@@ -6,7 +6,10 @@
     "build": "tsc",
     "dev": "nodemon --watch src --exec \"npm run start-dev\"",
     "start-dev": "tsc && node dist/server.js",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest --runInBand",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -25,8 +28,14 @@
   "devDependencies": {
     "@types/dotenv-safe": "^9.1.0",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.7.2",
+    "@types/node-fetch": "^2.6.13",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
