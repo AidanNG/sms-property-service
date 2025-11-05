@@ -4,6 +4,7 @@ import { geocodeAddress } from "../services/geocode.js";
 import { getPropertyData } from "../services/property.js";
 import { sendPropertyEmail } from "../services/email.js";
 import { formatPropertyMessage } from "../utils/format.js";
+import { logger } from "../utils/logger.js";
 import { z } from "zod";
 
 const router = express.Router();
@@ -20,7 +21,7 @@ router.post("/incoming", async (req, res, next) => {
     const parseResult = smsSchema.safeParse(req.body);
     //if the sms payload is invalid, respond with error message
     if (!parseResult.success) {
-        console.error("Invalid SMS payload:", parseResult.error.format());
+        logger.error("Invalid SMS payload:", parseResult.error.format());
         twiml.message("Invalid request. Make sure your message is not empty.");
         await sendPropertyEmail({
                 subject: `Property Info Failed - Invalid SMS Payload`,
@@ -30,7 +31,7 @@ router.post("/incoming", async (req, res, next) => {
         //return res.type("text/xml").send(twiml.toString());
     }
     const { Body: body, From: from } = parseResult.data;
-    console.log(`Incoming SMS from ${from}: "${body}"`);
+    logger.info(`Incoming SMS from ${from}: "${body}"`);
     try {
         const geo = await geocodeAddress(body);
         if (!geo) throw { message: "Address not found", statusCode: 404 };
@@ -51,7 +52,7 @@ router.post("/incoming", async (req, res, next) => {
             twiml.message("Your property info has been sent to your email.");
         }
     } catch (err) {
-        //console.error("Error processing SMS:", err);
+        //logger.error("Error processing SMS:", err);
         //twiml.message("Sorry, something went wrong. Please try again later.");
         next(err);
     }

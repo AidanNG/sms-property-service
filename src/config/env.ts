@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { logger } from "../utils/logger.js";
 dotenv.config();
 
 const required = [
@@ -12,7 +13,7 @@ const required = [
 
 for (const key of required) {
   if (!process.env[key]) {
-    console.warn(`Missing environment variable: ${key}`);
+    logger.warn(`Missing environment variable: ${key}`);
   }
 }
 

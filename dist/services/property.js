@@ -1,10 +1,11 @@
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import { logger } from "../utils/logger.js";
 dotenv.config();
 import { attomResponseSchema } from "../types/propertyTypes.js";
 export async function getPropertyData(lat, lon) {
     const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/snapshot?latitude=${lat}&longitude=${lon}`;
-    console.log("Fetching ATTOM property snapshot:", url);
+    logger.info(`Fetching ATTOM property snapshot: ${url} `);
     try {
         const res = await fetch(url, {
             headers: {
@@ -14,7 +15,7 @@ export async function getPropertyData(lat, lon) {
         });
         if (!res.ok) {
             const text = await res.text();
-            console.error("ATTOM lookup failed:", res.status, text);
+            logger.error("ATTOM lookup failed:", res.status, text);
             throw new Error(`ATTOM request failed (${res.status})`);
         }
         const data = await res.json();
@@ -23,7 +24,7 @@ export async function getPropertyData(lat, lon) {
         if (!property)
             return undefined;
         let lastSale;
-        //console.log("ATTOM Full Response:", JSON.stringify(data, null, 2));
+        //logger.info("ATTOM Full Response:", JSON.stringify(data, null, 2));
         //perform second api call to call sales history endpoint
         if (property.identifier?.attomId) {
             const salesUrl = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/saleshistory/snapshot?attomId=${property.identifier.attomId}`;
@@ -37,14 +38,15 @@ export async function getPropertyData(lat, lon) {
                 const salesData = await salesRes.json();
                 const parsedSales = attomResponseSchema.parse(salesData);
                 const saleHistory = parsedSales.property?.[0]?.salehistory || [];
-                console.log("ATTOM Full Response:", JSON.stringify(salesData, null, 2));
+                //logger.debug("ATTOM Full Response:", JSON.stringify(salesData, null, 2));
+                logger.info(`ATTOM Full Response: ${JSON.stringify(salesData, null, 2)}`);
                 // sort by most recent sale
                 if (saleHistory.length > 0) {
                     lastSale = saleHistory.sort((a, b) => (b.saleTransDate || "").localeCompare(a.saleTransDate || ""))[0];
                 }
             }
             else {
-                console.warn("ATTOM sales history API error:", salesRes.statusText);
+                logger.warn("ATTOM sales history API error:", salesRes.statusText);
             }
         }
         return {
@@ -62,7 +64,7 @@ export async function getPropertyData(lat, lon) {
         };
     }
     catch (err) {
-        console.error("ATTOM Fetch Error:", err);
+        logger.error("ATTOM Fetch Error:", err);
         return null;
     }
 }
