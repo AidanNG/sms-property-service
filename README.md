@@ -27,13 +27,25 @@ A TypeScript-based **Express server** that receives **incoming SMS messages**, l
 ```plaintext
 sms-property-service/
 ├── src/
+│   ├── app.ts
 │   ├── server.ts                # Express app entry point
+│   ├── config/
+│   │   ├── env.ts          	 # Load and validate environment variables
+│   ├── middleware/
+│   │   ├── errorHandler.ts      # Centralized error handling
+│   ├── routes/
+│   │   ├── smsRoutes.ts  
 │   ├── services/
-│   │   ├── property.ts          # ATTOM API integration (snapshot + sales)
-│   │   ├── geocode.ts           # Geocoding utility (Nominatim or similar)
+│   │   ├── email.ts		 # SendGrid API integration
+│   │   ├── sms.ts
+│   │   ├── property.ts          # ATTOM API integration 
+│   │   ├── geocode.ts           # Geocoding utility 
 │   ├── utils/
 │   │   ├── format.ts            # Formats property info into readable messages
-│   └── types/                   # (Optional) Shared type definitions
+│   │   ├── logger.ts            # Winston for structured logging
+│   └── types/                   # Shared type definitions
+│   	└── propertyTypes.ts
 ├── .env                         # Environment variables (not committed)
 ├── package.json
 └── tsconfig.json
+```
