@@ -10,6 +10,9 @@ dotenvSafe.config({
 export const env = {
   PORT: process.env.PORT ? Number(process.env.PORT) : 3000,
 
+  NEWEGG_EMAIL: process.env.NEWEGG_EMAIL!,
+  NEWEGG_PASSWORD: process.env.NEWEGG_PASSWORD!,
+
   TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID!,
   TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN!,
 
