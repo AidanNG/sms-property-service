@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^7.0.0",
     "@sendgrid/mail": "^8.1.6",
     "dotenv": "^17.2.3",
     "dotenv-safe": "^9.1.0",
@@ -28,6 +29,7 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.2",
     "nodemon": "^3.1.10",
+    "prisma": "^7.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

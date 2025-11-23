@@ -5,3 +5,5 @@ IMPROVEMENT_PLAN.md
 logs
 coverage
 dist
+/src/generated/prisma
+/src/db/testPrisma.ts
