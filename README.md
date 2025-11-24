@@ -26,26 +26,57 @@ A TypeScript-based **Express server** that receives **incoming SMS messages**, l
 
 ```plaintext
 sms-property-service/
+├── docs/
+│   └── index.html                 # Front-end landing & registration page
+│
+├── prisma/
+│   ├── schema.prisma              # Prisma schema
+│   └── migrations/                # Database migrations
+│
 ├── src/
-│   ├── app.ts
-│   ├── server.ts                # Express app entry point
+│   ├── automation/
+│   │   └── neweggAgent.ts         # Automation / scraping logic
+│   │
 │   ├── config/
-│   │   ├── env.ts          	 # Load and validate environment variables
+│   │   ├── env.ts                 # Environment variable loader
+│   │   └── db/
+│   │       ├── prisma.ts          # Prisma client (main)
+│   │       └── testPrisma.ts      # Test connection script
+│   │
 │   ├── middleware/
-│   │   ├── errorHandler.ts      # Centralized error handling
+│   │   └── errorHandler.ts        # Global error middleware
+│   │
+│   ├── models/
+│   │   └── user.ts                # User model/schema logic (if any)
+│   │
 │   ├── routes/
-│   │   ├── smsRoutes.ts  
-│   ├── services/
-│   │   ├── email.ts		 # SendGrid API integration
-│   │   ├── sms.ts
-│   │   ├── property.ts          # ATTOM API integration 
-│   │   ├── geocode.ts           # Geocoding utility 
+│   │   ├── register.ts            # Registration endpoint
+│   │   └── smsRoutes.ts           # SMS-related endpoints
+│   │
+│   ├── scripts/                   # Utility scripts
+│   │
+│   ├── services/                  # External service integrations
+│   │   ├── email.ts               # Email handling
+│   │   ├── geocode.ts             # Geocoding logic
+│   │   ├── property.ts            # Property data logic
+│   │   ├── sendgridService.ts     # SendGrid integration
+│   │   ├── sms.ts                 # SMS sending logic
+│   │   └── twilioService.ts       # Twilio verification logic
+│   │
+│   ├── types/
+│   │   └── propertyTypes.ts       # Shared property-related types
+│   │
 │   ├── utils/
-│   │   ├── format.ts            # Formats property info into readable messages
-│   │   ├── logger.ts            # Winston for structured logging
-│   └── types/                   # Shared type definitions
-│   	└── propertyTypes.ts
-├── .env                         # Environment variables (not committed)
+│   │   ├── format.ts              # Formatting helpers
+│   │   └── logger.ts              # Centralized logger (winston/pino)
+│   │
+│   ├── app.ts                     # Express app initialization
+│   └── server.ts                  # Server entry point
+│
+├── logs/                          # Runtime logs
+│
+├── .env                           # Environment variables
+├── .env.example                   # Example env template
 ├── package.json
 └── tsconfig.json
 ```
