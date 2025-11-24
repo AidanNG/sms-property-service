@@ -47,7 +47,7 @@
     }
     .modal h2 { margin-top: 0; }
     .modal input {
-      width: 100%;
+      width: 95%;
       padding: 10px;
       margin: 8px 0;
       border-radius: 5px;
@@ -82,7 +82,7 @@
   <p>Users can stop receiving messages at any time by replying with <strong>STOP</strong>. This immediately ends message delivery.</p>
 
   <h2>Register</h2>
-  <p>Want to create an account so your phone number and email are pre-approved for property lookups?</p>
+  <p>Want to add your phone number and email so that you can be approved for property lookups?</p>
   <button id="openRegister">Register</button>
 
   <!-- Modal -->
@@ -117,8 +117,8 @@
       e.preventDefault();
 
       const formData = Object.fromEntries(new FormData(e.target));
-
-      const res = await fetch("/api/register", {
+      console.log("Submitting registration:", formData);
+      const res = await fetch("http://localhost:3000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

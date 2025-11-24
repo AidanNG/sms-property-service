@@ -28,10 +28,10 @@ router.post("/", async (req, res) => {
     });
 
     // Twilio phone verification
-    await verifyPhoneNumber(name, phone);
+    //await verifyPhoneNumber(name, phone);
 
     // SendGrid contact addition
-    await addSendGridContact(name, email);
+    //await addSendGridContact(name, email);
 
     logger.info("User registered", { email, phone });
 
